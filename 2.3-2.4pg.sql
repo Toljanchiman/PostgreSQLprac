@@ -1,4 +1,3 @@
---https://onecompiler.com/postgresql/
 --CREATE database ZAFDB;
 --USE ZAFDB;
 
@@ -54,14 +53,14 @@ VALUES ('Khaludorov P.B.', '1995.07.20', '2022.11.06', 'programmer', 'jun', 2000
 INSERT INTO employees (fullname, databd, datast, jobname, level, salary, iddep, rights) 
 VALUES ('Boiko D.V.', '1996.03.15', '2022.11.06', 'manager', 'jun', 20000.00, 1, true);
 INSERT INTO employees (fullname, databd, datast, jobname, level, salary, iddep, rights) 
-VALUES ('Zaytsev A.F.', '1991.03.25', '2022.11.06', 'manager', 'lead', 120000.00, 1, true);
+VALUES ('Zaytsev A.F.', '1991.03.25', '2022.11.06', 'manager', 'lead', 125000.00, 1, true);
 
 
 --Добавление данных в таблицу Отделов
 INSERT INTO departments (name, supervisor, empcount) 
 VALUES ('Management', 'Zaytsev A.F.', 2);
 INSERT INTO departments (name, supervisor, empcount) 
-VALUES ('Management', 'Abatnin A.S.', 3);
+VALUES ('IT', 'Abatnin A.S.', 3);
 
 
 --Добавление данных в таблицу Рейтингов премий
@@ -138,5 +137,28 @@ SELECT idemp FROM ratings WHERE rating = 'D' or rating = 'E';
 --Выведите самую высокую зарплату в компании.
 SELECT MAX(salary) as maxsalary FROM employees;
 
+
+
+--Задания 2.4
+--Вывести именно фамилию сотрудника с самой высокой зарплатой.
+SELECT fullname FROM employees WHERE salary = (SELECT MAX(salary) FROM employees);
+
+
+--Попробуйте вывести фамилии сотрудников в алфавитном порядке
+SELECT fullname FROM employees order by fullname asc; 
+
+
+--Рассчитайте средний стаж для каждого уровня сотрудников
+SELECT level, AVG(date_part('day', '2022.11.08'::date) - date_part('day', datast::date)) as avgexp FROM employees group by level;
+
+
+--Выведите фамилию сотрудника и название отдела, в котором он работает
+SELECT fullname, name FROM employees AS emp INNER JOIN departments AS dp ON emp.iddep = dp.id;
+
+
+--Выведите название отдела и фамилию сотрудника с самой высокой зарплатой в данном отделе и саму зарплату также.
+SELECT department, fullname, maxsalary FROM 
+(SELECT name as department, MAX(salary) as maxsalary FROM employees AS emp INNER JOIN departments AS dp ON emp.iddep = dp.id
+group by name) AS tmptbl INNER JOIN employees AS emp2 ON tmptbl.maxsalary = emp2.salary
 
 
